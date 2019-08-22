@@ -55,13 +55,14 @@ var returnFnResult = fn => fn();
  */
 
 function returnCounter(number = 0) {
-  var newNum = () => {
-    return (number += 1);
-  };
-  return newNum;
+    var newNum = () => {
+        return (number += 1);
+    };
+
+    return newNum;
 }
 
-var f = returnCounter(10);
+returnCounter(10);
 
 /*
  Задание 5 *:
@@ -74,12 +75,13 @@ var f = returnCounter(10);
  */
 
 function returnArgumentsArray() {
-  let args = [];
-  for (var i = 0; i < arguments.length; i++) {
-    args[i] = arguments[i];
-  }
+    let args = [];
 
-  return args;
+    for (var i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
+    }
+
+    return args;
 }
 
 /*
@@ -98,29 +100,27 @@ function returnArgumentsArray() {
    console.log(newSum()) выведет 6
  */
 
-function sum() {
-  var result = 0;
-  for (let i = 0; i < arguments.length; i++) {
-    result += arguments[i];
-  }
-  return result;
+function fn() {
+    return arguments;
 }
 
 function bindFunction(fn) {
-  var arr = [];
-  for (let i = 1; i < arguments.length; i++) {
-    arr.push(arguments[i]);
-  }
-  return newSum = fn.bind(undefined, ...arr);
+    let arr = [];
+
+    for (let i = 1; i < arguments.length; i++) {
+        arr.push(arguments[i]);
+    }
+
+    return fn.bind(null, ...arr);
 }
 
-var newSum = bindFunction(sum, 2, 4, 3);
+bindFunction(fn, 2, 4, 3);
 
 export {
-  returnFirstArgument,
-  sumWithDefaults,
-  returnArgumentsArray,
-  returnFnResult,
-  returnCounter,
-  bindFunction
+    returnFirstArgument,
+    sumWithDefaults,
+    returnArgumentsArray,
+    returnFnResult,
+    returnCounter,
+    bindFunction
 };
