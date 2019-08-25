@@ -10,7 +10,8 @@
     "es6": true
   },
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "prettier"
   ],
   "rules": {
     "no-cond-assign": "off",
