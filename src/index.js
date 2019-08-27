@@ -8,9 +8,9 @@
  */
 
 function forEach(array, fn) {
-  for(let i = 0; i < array.length; i++){
-    fn(array[i], i, array)
-  }
+    for (let i = 0; i < array.length; i++) {
+        fn(array[i], i, array);
+    }
 }
 
 /*
@@ -20,16 +20,17 @@ function forEach(array, fn) {
  Посмотрите как работает map и повторите это поведение для массива, который будет передан в параметре array
  */
 
-
 function map(array, fn) {
-  let newArray = []
-  for(let i = 0; i < array.length; i++){
-    let returnItem = fn(array[i], i, array)
-    newArray.push(returnItem)
-  }
-  return newArray;
-}
+    let newArray = [];
 
+    for (let i = 0; i < array.length; i++) {
+        let returnItem = fn(array[i], i, array);
+
+        newArray.push(returnItem);
+    }
+    
+    return newArray;
+}
 
 /*
  Задание 3:
@@ -39,20 +40,21 @@ function map(array, fn) {
  */
 
 function reduce(array, fn, initial) {
-  let previousValue
-  if(initial === undefined){
-     previousValue = array[0]
-    for(let i = 1; i<array.length; i++){
-      previousValue = fn(previousValue, array[i], i , array);
+    let previousValue;
+
+    if (initial === undefined) {
+        previousValue = array[0];
+        for (let i = 1; i < array.length; i++) {
+            previousValue = fn(previousValue, array[i], i, array);
+        }
+    } else {
+        previousValue = initial;
+        for (let i = 0; i < array.length; i++) {
+            previousValue = fn(previousValue, array[i], i, array);
+        }
     }
-  }
-  else{
-    previousValue = initial
-    for(let i = 0; i<array.length; i++){
-      previousValue = fn(previousValue, array[i], i, array);
-    }
-  }
-  return previousValue
+    
+    return previousValue;
 }
 /*
  Задание 4:
@@ -63,16 +65,15 @@ function reduce(array, fn, initial) {
    upperProps({ name: 'Сергей', lastName: 'Петров' }) вернет ['NAME', 'LASTNAME']
  */
 
-
-
 function upperProps(obj) {
-  let newArray = []
-  for(var key in obj){
-    newArray.push(key.toUpperCase())
-  }
-  return newArray
-}
+    let newArray = [];
 
+    for (var key in obj) {
+        newArray.push(key.toUpperCase());
+    }
+    
+    return newArray;
+}
 
 /*
  Задание 5 *:
@@ -80,7 +81,31 @@ function upperProps(obj) {
  Напишите аналог встроенного метода slice для работы с массивами
  Посмотрите как работает slice и повторите это поведение для массива, который будет передан в параметре array
  */
+
 function slice(array, from, to) {
+    if (from < 0) {
+        array = array.filter(function(item, i) {
+            if (to === undefined) {
+                return i > array.length + from - 1;
+            } 
+            
+            return i > array.length + from - 1 && i < array.length + to;
+      
+        });
+    }
+
+    if (from > 0) {
+        array = array.filter(function(item, i) {
+            if (to === undefined) {
+                return i > from - 1;
+            } 
+            
+            return i > from - 1 && i < to;
+      
+        });
+    }
+    
+    return array;
 }
 
 /*
@@ -89,14 +114,22 @@ function slice(array, from, to) {
  Функция принимает объект и должна вернуть Proxy для этого объекта
  Proxy должен перехватывать все попытки записи значений свойств и возводить это значение в квадрат
  */
+
 function createProxy(obj) {
+    obj = new Proxy(obj, { 
+        set(target, prop, val) { 
+            if (typeof val == 'number') {
+                target[prop] = val * val;
+                
+                return true;
+            } 
+            
+            return false;
+      
+        }
+    });
+
+    return obj
 }
 
-export {
-    forEach,
-    map,
-    reduce,
-    upperProps,
-    slice,
-    createProxy
-};
+export { forEach, map, reduce, upperProps, slice, createProxy };
