@@ -123,9 +123,9 @@ function createProxy(obj) {
                 
                 return true;
             } 
-            
-            return false;
-      
+            else{
+              return false;
+            }
         }
     });
 
