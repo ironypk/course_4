@@ -28,7 +28,7 @@ function map(array, fn) {
 
         newArray.push(returnItem);
     }
-    
+
     return newArray;
 }
 
@@ -41,19 +41,19 @@ function map(array, fn) {
 
 function reduce(array, fn, initial) {
     let previousValue;
+    let i;
 
     if (initial === undefined) {
         previousValue = array[0];
-        for (let i = 1; i < array.length; i++) {
-            previousValue = fn(previousValue, array[i], i, array);
-        }
+        i = 1;
     } else {
         previousValue = initial;
-        for (let i = 0; i < array.length; i++) {
-            previousValue = fn(previousValue, array[i], i, array);
-        }
+        i = 0;
     }
-    
+    for (; i < array.length; i++) {
+        previousValue = fn(previousValue, array[i], i, array);
+    }
+
     return previousValue;
 }
 /*
@@ -71,7 +71,7 @@ function upperProps(obj) {
     for (var key in obj) {
         newArray.push(key.toUpperCase());
     }
-    
+
     return newArray;
 }
 
@@ -83,28 +83,43 @@ function upperProps(obj) {
  */
 
 function slice(array, from, to) {
-    if (from < 0) {
-        array = array.filter(function(item, i) {
-            if (to === undefined) {
-                return i > array.length + from - 1;
-            } 
-            
-            return i > array.length + from - 1 && i < array.length + to;
-      
-        });
-    }
+    array = array.filter(function(item, i) {
+        if (from === undefined && to > 0) {
+            return i < to;
+        }
+        if (from === undefined && to < 0) {
+            return i < array.length + to;
+        }
 
-    if (from > 0) {
-        array = array.filter(function(item, i) {
-            if (to === undefined) {
-                return i > from - 1;
-            } 
-            
+        if (from === undefined && to === undefined) {
+            return item;
+        }
+
+        if (from >= 0 && to === undefined) {
+            return i > from - 1;
+        }
+
+        if (from >= 0 && to > 0) {
             return i > from - 1 && i < to;
-      
-        });
-    }
-    
+        }
+
+        if (from >= 0 && to < 0) {
+            return i > from - 1 && i < array.length + to;
+        }
+
+        if (from < 0 && to === undefined) {
+            return i > array.length + from - 1;
+        }
+
+        if (from < 0 && to > 0) {
+            return i > array.length + from - 1 && i < to;
+        }
+
+        if (from < 0 && to < 0) {
+            return i > array.length + from - 1 && i < array.length + to;
+        }
+    });
+
     return array;
 }
 
@@ -116,20 +131,20 @@ function slice(array, from, to) {
  */
 
 function createProxy(obj) {
-    obj = new Proxy(obj, { 
-        set(target, prop, val) { 
+    obj = new Proxy(obj, {
+        set(target, prop, val) {
             if (typeof val == 'number') {
                 target[prop] = val * val;
-                
+
                 return true;
             } 
-            else{
-              return false;
-            }
+            
+            return false;
+      
         }
     });
 
-    return obj
+    return obj;
 }
 
 export { forEach, map, reduce, upperProps, slice, createProxy };
