@@ -20,7 +20,7 @@ import { isFunction } from 'util';
  */
 
 function isAllTrue(array, fn) {
-    if (!Array.isArray(array) || array.length == 0) {
+    if (array.constructor !== Array || array.length == 0) {
         throw new Error('empty array')
     } else if (!isFunction(fn)) {
         throw new Error('fn is not a function')
@@ -51,7 +51,7 @@ function isAllTrue(array, fn) {
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
-    if (!Array.isArray(array) || array.length == 0) {
+    if (array.constructor !== Array || array.length == 0) {
         throw new Error('empty array')
     } else if (!isFunction(fn)) {
         throw new Error('fn is not a function')
