@@ -78,7 +78,7 @@ function delegate(target, fn) {
  */
 
 function once(target, fn) {
-    var listener = function (e) {
+    let listener = (e) =>{
         fn();
         e.target.removeEventListener('click', listener)
     };
