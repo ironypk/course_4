@@ -1,4 +1,4 @@
-import { loadAndSortTowns } from "./index";
+import { loadAndSortTowns } from './index';
 /*
  Страница должна предварительно загрузить список городов из
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
@@ -30,7 +30,7 @@ import { loadAndSortTowns } from "./index";
    homeworkContainer.appendChild(newDiv);
  */
 
-const homeworkContainer = document.querySelector("#homework-container");
+const homeworkContainer = document.querySelector('#homework-container');
 /*
  Функция должна вернуть Promise, который должен быть разрешен с массивом городов в качестве значения
 
@@ -39,39 +39,41 @@ const homeworkContainer = document.querySelector("#homework-container");
  */
 
 function loadTowns() {
-  return loadAndSortTowns()
-    .catch(() => {
-      loadingBlock.innerHTML = "Не удалось загрузить города";
-      let button = repeatButton();
-      loadingBlock.appendChild(button);
-      button.addEventListener("click", () => {
-        loadTowns();
-      });
-    });
+    return loadAndSortTowns()
+        .then(towns => {
+            loadingBlock.style.display = 'none'
+            filterInput.style.display = 'block'
+            
+            return towns
+        })
+        .catch(() => {
+            loadingBlock.innerHTML = 'Не удалось загрузить города';
+            let button = repeatButton();
+
+            loadingBlock.appendChild(button);
+            button.addEventListener('click', loadTowns);
+        });
 }
-
-
 
 let towns = loadTowns();
 
-
 function createTownNode(name) {
-  let div = document.createElement("div");
+    let div = document.createElement('div');
 
-  div.classList.add("town");
-  div.textContent = name;
+    div.classList.add('town');
+    div.textContent = name;
 
-  return div;
+    return div;
 }
 
 let repeatButton = () => {
-  let button = document.createElement("button");
+    let button = document.createElement('button');
 
-  button.classList.add("repeat");
-  button.textContent = "Повторить";
-  button.style.cssText = "display : block; width: 100px; height:50px;}";
+    button.classList.add('repeat');
+    button.textContent = 'Повторить';
+    button.style.cssText = 'display : block; width: 100px; height:50px;}';
 
-  return button;
+    return button;
 };
 
 /*
@@ -86,39 +88,39 @@ let repeatButton = () => {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
-  if (chunk.length !== 0) {
-    chunk = chunk.toLowerCase();
-    full = full.toLowerCase();
-    if (full.indexOf(chunk) !== -1) {
-      return true;
+    if (chunk.length !== 0) {
+        chunk = chunk.toLowerCase();
+        full = full.toLowerCase();
+        if (full.indexOf(chunk) !== -1) {
+            return true;
+        }
     }
-  }
 
-  return false;
+    return false;
 }
 
 /* Блок с надписью "Загрузка" */
-const loadingBlock = homeworkContainer.querySelector("#loading-block");
+const loadingBlock = homeworkContainer.querySelector('#loading-block');
 /* Блок с текстовым полем и результатом поиска */
-const filterBlock = homeworkContainer.querySelector("#filter-block");
+const filterBlock = homeworkContainer.querySelector('#filter-block');
 /* Текстовое поле для поиска по городам */
-const filterInput = homeworkContainer.querySelector("#filter-input");
+const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
-const filterResult = homeworkContainer.querySelector("#filter-result");
+const filterResult = homeworkContainer.querySelector('#filter-result');
 
-filterInput.addEventListener("keyup", function() {
-  let currentValue = filterInput.value;
+filterInput.addEventListener('keyup', function() {
+    let currentValue = filterInput.value;
 
-  filterResult.innerHTML = "";
-  towns.then(towns => {
-    for (let { name } of towns) {
-      if (isMatching(name, currentValue)) {
-        let addTown = createTownNode(name);
+    filterResult.innerHTML = '';
+    towns.then(towns => {
+        for (let { name } of towns) {
+            if (isMatching(name, currentValue)) {
+                let addTown = createTownNode(name);
 
-        filterResult.appendChild(addTown);
-      }
-    }
-  });
+                filterResult.appendChild(addTown);
+            }
+        }
+    });
 });
 
 export { loadTowns, isMatching };
