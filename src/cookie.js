@@ -1,3 +1,5 @@
+import { create } from 'domain';
+
 /*
  ДЗ 7 - Создать редактор cookie с возможностью фильтрации
 
@@ -44,9 +46,86 @@ const addButton = homeworkContainer.querySelector('#add-button');
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('keyup', function() {
-    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    let currentValue = filterNameInput.value;
+
+    listTable.innerHTML = '';
+    for (let cookie in cookies) {
+        if (isMatching(cookie, currentValue)) {
+            createCookieNode(cookie, cookies[cookie]);
+        }
+    }
 });
 
 addButton.addEventListener('click', () => {
-    // здесь можно обработать нажатие на кнопку "добавить cookie"
+    if (addNameInput.value !== '' && addValueInput.value !== '') {
+        document.cookie = `${addNameInput.value}=${addValueInput.value}; max-age=3600`;
+        addNameInput.value = '';
+        addValueInput.value = '';
+        splitCookies();
+        downloadCookies();
+    }
 });
+
+let cookies;
+
+function splitCookies() {
+    if (document.cookie !== '') {
+        cookies = document.cookie.split('; ').reduce((prev, current) => {
+            const [name, value] = current.split('=');
+
+            prev[name] = value;
+            
+            return prev;
+        }, {});
+    }
+}
+splitCookies();
+
+function downloadCookies() {
+    listTable.innerHTML = '';
+    for (let cookie in cookies) {
+        createCookieNode(cookie, cookies[cookie]);
+    }
+}
+
+downloadCookies();
+
+function createCookieNode(name, value) {
+    let tr = document.createElement('tr');
+    let thName = document.createElement('th');
+    let thValue = document.createElement('th');
+    let button = document.createElement('button');
+
+    thName.textContent = name;
+    thValue.textContent = value;
+    button.textContent = 'Удалить';
+    button.style.cssText = 'display : block; width: 100%; height: 100%;}';
+    tr.appendChild(thName);
+    tr.appendChild(thValue);
+    tr.appendChild(button)
+    button.addEventListener('click', (e)=>{
+        if (e.target.tagName !== 'TR' && e.target.tagName !== 'TBODY') {
+            deleteCookie(e);
+        }
+    })
+    listTable.appendChild(tr)
+    
+    return tr
+}
+
+function deleteCookie(e) {
+    let targetCookieName = e.target.parentNode.firstElementChild.textContent;
+
+    document.cookie = `${targetCookieName}=''; max-age=0`;
+    e.target.parentNode.remove();
+}
+
+function isMatching(full, chunk) {
+    chunk = chunk.toLowerCase();
+    full = full.toLowerCase();
+    if (full.indexOf(chunk) !== -1) {
+        return true;
+    }
+    
+    return false;
+}
