@@ -1,5 +1,9 @@
-import render from "../templates/rewiews-content.hbs";
+import modal from "../templates/modal-content.hbs";
+import render from "../templates/item-content.hbs";
 import { currentDate } from "./currentDate";
+import { lift } from "when";
+
+let modalTemplate = modal();
 
 function mapInit() {
   //Создаем карту
@@ -16,37 +20,14 @@ function mapInit() {
     //Создаем метку
     myPlacemark,
     //Создаем шаблон балуна
-    myBalloonLayout = ymaps.templateLayoutFactory.createClass(
-      `<div class="rewiew">
-    <div class="rewiew_container">
-        <div class="rewiew_head">
-            <p class='adress'></p>
-            <div class="close_button">
-            </div>
-        </div>
-        <div class="rewiew_main">
-            <ul class="rewiews">
-                 нет отзывов
-            </ul>
-            <form class='form'>
-                <div class="form_text">ВАШ ОТЗЫВ</div>
-                <input class='form_row' type="text" name="name" placeholder="Ваше имя">
-                <input class='form_row' type="text" name="place" placeholder="Укажите место">
-                <textarea class='form_row form_textarea' name="rewiew"
-                    placeholder="Поделитесь впечатлениями"></textarea>
-                <button class="form_button">Добавить</button>
-            </form>
-        </div>
-    </div>
-</div>`
-    ),
     //Создаем массив с нашими данными
-    placeRewiew = [],
+    placeRewiew = [
+    ],
     //Создаем координаты текущего нажатия
     coords = "";
 
+
   //Помещаем созданный шаблон балуна в хранилище шаблонов
-  ymaps.layout.storage.add("my#balloonlayout", myBalloonLayout);
 
   //Обработка ивентов по форме
   document.addEventListener("click", e => {
@@ -55,20 +36,22 @@ function mapInit() {
     }
     if (e.target.classList.value === "form_button") {
       e.preventDefault();
+      let modal = document.querySelector('.rewiew')
       let form = document.querySelector(".form");
       let rewiewsList = document.querySelector(".rewiews");
-      placeRewiew.push({
-        coords : coords,
+      let item  = {
         date: currentDate(),
         name: form.elements.name.value,
         place: form.elements.place.value,
         rewiew: form.elements.rewiew.value
-      });
-      rewiewsList.innerHTML = render({ placeRewiew });
+      }
+      placeRewiew.push(item);
+      rewiewsList.innerHTML = render({placeRewiew});
       form.elements.name.value = "";
       form.elements.place.value = "";
       form.elements.rewiew.value = "";
-      myPlacemark = createPlacemark(coords);
+
+      myPlacemark = createPlacemark(coords, modal.outerHTML);
       myMap.geoObjects.add(myPlacemark);
     }
   });
@@ -76,11 +59,10 @@ function mapInit() {
   myMap.events.add("click", function(e) {
 
     coords = e.get("coords");
-    myMap.balloon.open(coords, "", {
+
+    myMap.balloon.open(coords, modalTemplate, {
       closeButton: false,
-      contentLayout: "my#balloonlayout",
-      minHeight: 530,
-      minWidth: 380
+      layout: "default#imageWithContent"
     });
     getAddress(coords);
   });
@@ -93,16 +75,15 @@ function mapInit() {
     });
   }
 
-  function createPlacemark(coords) {
+  function createPlacemark(coords, template) {
     return new ymaps.Placemark(
       coords,
       {
-        preset: "islands#violetDotIconWithCaption"
+        balloonContent: template,
       },
       {
-        balloonContentLayout: "my#balloonlayout",
-        balloonMinWidth: 380,
-        balloonMinHeight: 530
+        balloonLayout: "default#imageWithContent",
+        preset: "islands#violetDotIconWithCaption"
       }
     );
   }
