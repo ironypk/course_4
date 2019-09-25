@@ -1,13 +1,3 @@
-clusterer = new ymaps.Clusterer({
-    preset: 'islands#invertedVioletClusterIcons',
-    groupByCoordinates: false,
-    clusterDisableClickZoom: true,
-    clusterHideIconOnBalloonOpen: false,
-    geoObjectHideIconOnBalloonOpen: false
-}),
-geoObjects = [];
-
-
 
 function createCluster(currentGeoObject){
 if(geoObjects.length === 0){
