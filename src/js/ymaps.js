@@ -5,6 +5,8 @@ import { map } from "when";
 
 let modalTemplate = modal();
 
+
+
 function mapInit() {
   //Создаем карту
   let myMap = new ymaps.Map(
@@ -65,14 +67,13 @@ function mapInit() {
     getAddress(coords);
   });
 
-
   /// Добавление нового отзыва в метку или добаление нвойо метки с отзывом.
   function createNewRewiew() {
-    let modal = document.querySelector(".rewiew");
-    let form = document.querySelector(".form");
-    let rewiewsList = document.querySelector(".rewiews");
-    let adress = document.querySelector(".adress");
-    let item = {
+    var modal = document.querySelector(".rewiew");
+    var form = document.querySelector(".form");
+    var rewiewsList = document.querySelector(".rewiews");
+    var adress = document.querySelector(".adress");
+    var item = {
       date: currentDate(),
       name: form.elements.name.value,
       place: form.elements.place.value,
@@ -91,7 +92,7 @@ function mapInit() {
     form.elements.name.value = "";
     form.elements.place.value = "";
     form.elements.rewiew.value = "";
-    myPlacemark = createPlacemark(coords, modal.outerHTML);
+    myPlacemark = createPlacemark(coords, modal);
     myMap.geoObjects.add(myPlacemark);
     geoObjects.push(myPlacemark);
     clusterer.add(myPlacemark);
@@ -99,8 +100,19 @@ function mapInit() {
     myPlacemark.events.add("click", e => {
       coords = e.originalEvent.target.geometry.getCoordinates();
       getAddress(coords);
+      // coordsValue = dataMap.get(coords);
+      // rewiewsList.innerHTML = render({ coordsValue });
+      myMap.balloon.open();
     });
   }
+
+
+  // function openThisPlacemarkBaloon(coords, modal){
+  //   myMap.balloon.open(coords, modalTemplate, {
+  //     closeButton: false,
+  //     layout: "default#imageWithContent"
+  //   });
+  // }
 
 
 
@@ -118,7 +130,7 @@ function mapInit() {
   function createPlacemark(coords, template) {
     return new ymaps.Placemark(
       coords,
-      {
+      { 
         balloonContent: template
       },
       { draggable : true,
