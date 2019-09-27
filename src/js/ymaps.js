@@ -5,8 +5,6 @@ import { map } from "when";
 
 let modalTemplate = modal();
 
-
-
 function mapInit() {
   //Создаем карту
   let myMap = new ymaps.Map(
@@ -28,19 +26,29 @@ function mapInit() {
     coordsValue = [],
     //Координаты текущего нажатия по карте или  текущей метки.
     coords,
+    customItemContentLayout = ymaps.templateLayoutFactory.createClass(
+      // Флаг "raw" означает, что данные вставляют "как есть" без экранирования html.
+      "<div class=ballon_header>{{ properties.balloonContentHeader|raw }}</div>" +
+        "<a class=ballon_link>{{ properties.balloonContentLink|raw }}</a>" +
+        "<div class=ballon_text>{{ properties.balloonContentText|raw }}</div>" +
+        "<div class=ballon_footer>{{ properties.balloonContentFooter|raw }}</div>"
+    ),
     clusterer = new ymaps.Clusterer({
       preset: "islands#invertedVioletClusterIcons",
       groupByCoordinates: false,
       clusterDisableClickZoom: true,
       clusterHideIconOnBalloonOpen: false,
       geoObjectHideIconOnBalloonOpen: false,
-      clusterBalloonContentLayout: 'cluster#balloonCarousel',
+      clusterBalloonContentLayout: "cluster#balloonCarousel",
+      clusterBalloonItemContentLayout: customItemContentLayout,
       clusterBalloonContentLayoutWidth: 200,
       clusterBalloonContentLayoutHeight: 130,
       clusterBalloonPagerSize: 3
     }),
-    geoObjects = [];
-  
+    geoObjects = [],
+    modal,
+    rewiewsList,
+    adress;
 
   //Обработка ивентов по форме
   document.addEventListener("click", e => {
@@ -49,14 +57,32 @@ function mapInit() {
     }
     if (e.target.classList.value === "form_button") {
       e.preventDefault();
-      if(geoObjects.length){
-        deleteSameCoordsGeoobject()
-        }
+      if (geoObjects.length) {
+        deleteSameCoordsGeoobject();
+      }
       createNewRewiew();
+    }
+    if (e.target.classList.value === "ballon_link") {
+      let currentAdress = e.target.textContent;
+
+      getCoords(currentAdress);
     }
   });
 
-
+// Получаем ключ по тексту ссылки. И отрисовываем модалку.
+  function getCoords(currentAdress){
+    for(let [key, value] of dataMap){
+      if(value[0].adress === currentAdress){
+        coords = key;
+        coordsValue = dataMap.get(coords);
+        adress.textContent = currentAdress;
+        rewiewsList.innerHTML = render({ coordsValue });
+        myMap.balloon.open(coords, modal.outerHTML, {
+          layout: "default#imageWithContent"
+        });
+      }
+    }
+  }
 
   myMap.events.add("click", function(e) {
     coords = e.get("coords");
@@ -69,17 +95,17 @@ function mapInit() {
 
   /// Добавление нового отзыва в метку или добаление нвойо метки с отзывом.
   function createNewRewiew() {
-    var modal = document.querySelector(".rewiew");
+    modal = document.querySelector(".rewiew");
     var form = document.querySelector(".form");
-    var rewiewsList = document.querySelector(".rewiews");
-    var adress = document.querySelector(".adress");
+    rewiewsList = document.querySelector(".rewiews");
+    adress = document.querySelector(".adress");
     var item = {
       date: currentDate(),
+      adress: adress.textContent,
       name: form.elements.name.value,
       place: form.elements.place.value,
       rewiew: form.elements.rewiew.value
     };
-    adress.textContent = getAddress(coords);
     if (dataMap.get(coords) === undefined) {
       coordsValue = [];
       coordsValue.push(item);
@@ -92,30 +118,25 @@ function mapInit() {
     form.elements.name.value = "";
     form.elements.place.value = "";
     form.elements.rewiew.value = "";
-    myPlacemark = createPlacemark(coords, modal);
+    myPlacemark = createPlacemark(coords, item);
     myMap.geoObjects.add(myPlacemark);
     geoObjects.push(myPlacemark);
     clusterer.add(myPlacemark);
-    myMap.geoObjects.add(clusterer)
+    myMap.geoObjects.add(clusterer);
     myPlacemark.events.add("click", e => {
       coords = e.originalEvent.target.geometry.getCoordinates();
       getAddress(coords);
-      // coordsValue = dataMap.get(coords);
-      // rewiewsList.innerHTML = render({ coordsValue });
-      myMap.balloon.open();
+      openPlacemarkModal();
     });
   }
 
-
-  // function openThisPlacemarkBaloon(coords, modal){
-  //   myMap.balloon.open(coords, modalTemplate, {
-  //     closeButton: false,
-  //     layout: "default#imageWithContent"
-  //   });
-  // }
-
-
-
+  function openPlacemarkModal() {
+    coordsValue = dataMap.get(coords);
+    rewiewsList.innerHTML = render({ coordsValue });
+    myMap.balloon.open(coords, modal.outerHTML, {
+      layout: "default#imageWithContent"
+    });
+  }
 
   // Определяем адрес по координатам
   function getAddress(coords) {
@@ -126,30 +147,26 @@ function mapInit() {
     });
   }
 
-
-  function createPlacemark(coords, template) {
+  function createPlacemark(coords, item) {
     return new ymaps.Placemark(
       coords,
-      { 
-        balloonContent: template
+      {
+        balloonContentHeader: item.place,
+        balloonContentLink: item.adress,
+        balloonContentText: item.rewiew,
+        balloonContentFooter: item.date
       },
-      { draggable : true,
-        balloonLayout: "default#imageWithContent",
-        preset: "islands#violetDotIconWithCaption"
-      }
+      { hasBalloon: false, preset: "islands#violetDotIconWithCaption" }
     );
   }
 
-
-  function deleteSameCoordsGeoobject(){
+  function deleteSameCoordsGeoobject() {
     geoObjects.forEach(item => {
-      if(item.geometry.getCoordinates() === coords){
-        myMap.geoObjects.remove(item)
+      if (item.geometry.getCoordinates() === coords) {
+        myMap.geoObjects.remove(item);
+      }
+    });
   }
-})
-  }
-
-  
 }
 
 export { mapInit };

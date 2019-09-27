@@ -2,9 +2,6 @@
   box-sizing: border-box;
 }
 
-a {
-  text-decoration: none;
-}
 
 ul {
   margin: 0;
@@ -161,4 +158,24 @@ body {
   border: none;
   background-color: #ff8663;
   color: #fff;
+}
+
+
+.ballon_header{
+  margin: 0 0 10px 0;
+  font-weight: bold;
+}
+
+.ballon_link{
+  display: block;
+  color:#0000FF;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-bottom:10px;
+}
+
+.ballon_footer{
+  position:absolute;
+  right:0;
+  bottom: 5px;
 }
