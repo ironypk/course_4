@@ -4,15 +4,12 @@
   <meta charset="UTF-8">
   <title>{{htmlWebpackPlugin.options.title}}</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.2.0/handlebars.js"></script>
-  <script src="https://api-maps.yandex.ru/2.1/?apikey=b207bac2-d769-46f3-ac24-fa18ec55c5e9&lang=ru_RU">
-    </script>
     <link rel="stylesheet" href="./src/style/main.css">
 </head>
 <body>
   <div class="wrapper">
     <div class="main">
-       {{> "./src/templates/map-content.hbs"}}
-       {{!-- {{> './src/templates/modal-content.hbs'}} --}}
+       {{> "./src/templates/main-content.hbs"}}
     </div>
   </div>
 </body>
