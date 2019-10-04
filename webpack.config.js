@@ -16,10 +16,10 @@ rules.push({
 
 module.exports = {
     entry: {
-        index: './src/index.js',
+        index: './index.js',
     },
     devServer: {
-        index: 'index.html',
+        index: './views/index.hbs',
         overlay: true
     },
     output: {
@@ -44,16 +44,9 @@ module.exports = {
         ]
     },
     plugins: [
-        // new webpack.optimize.UglifyJsPlugin({
-        //     sourceMap: true,
-        //     compress: {
-        //         drop_debugger: false,
-        //         warnings: false
-        //     }
-        // }),
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
-            title: 'GeoFeedback',
+            title: 'Chat',
             template: 'index.hbs'
         }),
         new CleanWebpackPlugin(['dist'])

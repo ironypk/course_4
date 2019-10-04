@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.0/handlebars.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js'></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="welcome">
+            <form action="" class="form">
+                <div class="form__image"><img src="./images/welcome.png" alt="" class="form__pic" /></div>
+                <div class="form__description">
+                    <div class="form__head">Авторизация</div>
+                    <div class="form__text">Введите пожалуйста своё фио и ник для дальнейшей авторизации</div>
+                </div>
+                <label class="form__name form__row">
+                    <input type="text" class="form__name_input form__input" name='name' placeholder="Введите свое имя"
+                        required>
+                </label>
+                <label class="form__nickname form__row">
+                    <input type="text" class="form__nickname_input form__input" name='nickname'
+                        placeholder="Введите свой ник" required>
+                </label>
+                <button class="form__button">ВОЙТИ</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/x-handlebars-template" id='test'>
+        <div>{{test}}</div>
+    </script>
+
+    {{!-- <script>
+        let counter = {
+            test: 1
+        };
+        let template2 = Handlebars.compile('<div>{{test}}</div>')
+        console.log(template2(counter))
+    </script> --}}
+
+    <script type="text/x-handlebars-template" id='chat'>
+        <div class="chatroom">
+            <div class="chatroom__container">
+                <div class="users">
+                    <ul class="users__list">
+                        {{#each currentUsers}}
+                            <li class="user__item">
+                                <div class="user__img">
+                                    <img src="" alt="" class="user__pic">
+                                </div>
+                                <div class="user__info">
+                                    <div class="user__name"> {{name}}
+                                    </div>
+                                    <div class="user__last_msg">{{msg}}</div>
+                                </div>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                <div class="messages">
+                    <div class="messages__head">
+                        <div class="messages__text">Чат</div>
+                        <div class="messages__users">{{counter}}</div>
+                    </div>
+                    <div class="messages__content"></div>
+                    <div class="messages__footer">
+                        <input type="text" class="messages__send" placeholder='Введите сообщение...'>
+                        <button class="messages__btn">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script src="./main.js" type='module'></script>
+</body>
+
+</html>
