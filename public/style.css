@@ -16,9 +16,15 @@ a{
     text-decoration:none;
 }
 
+ul{
+    margin: 0;
+    padding: 0;
+}
+
 ul>li{
     list-style: none;
 }
+
 
 .welcome{
     margin:0 auto;
@@ -101,16 +107,161 @@ ul>li{
 
 
 .users{
+    padding: 10px;
+    position: relative;
     width:25%;
     min-height:100%;
     margin-right:4px;
     background-color: #17212b;
+    overflow: hidden;
 }
 
+/* navbar */
+/* navbar */
+/* navbar */
+
+.users__menu{
+    display:none;
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: #17212b;
+}
+.users__bar{
+    display: flex;
+    align-items: center;
+    width:100%;
+    height:30px;
+    margin-bottom:20px;
+}
+
+.hamburger-menu-link {
+	display:flex;
+	align-items:center;
+    position: relative;
+    width:24px;
+    height: 20px;
+    margin-right: 10px;
+	align-items: center;
+}
+
+.hamburger-menu-link__bars{
+    background: #242f3d;
+    width: 24px;
+    height: 3px;
+    border-radius: 3px;
+}
+.hamburger-menu-link__bars::before {
+        content: "";
+        display: block;
+        position: absolute;
+        background: #242f3d;
+        width: 24px;
+        height: 3px;
+        border-radius: 3px;
+    }
+.hamburger-menu-link__bars::after {
+        content: "";
+        display: block;
+        position: absolute;
+        background: #242f3d;
+        width: 24px;
+        height: 3px;
+        border-radius: 3px;
+	}
+.hamburger-menu-link__bars::before{
+		top: 0;
+    }
+.hamburger-menu-link__bars::after{
+		bottom: 0;
+    }
+    
+.users__search{
+    display: block;
+    width:100%;
+    height:30px;
+    background-color: #242f3d;
+    border-radius: 3px;
+    padding: 10px;
+    border:none;
+    color: #fff;
+}
+
+.users__menu_list{
+    width:100%;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    padding-top:40px;
+}
+
+
+.users__menu__item{
+    height:20px;
+    width:100%;
+    display: flex;
+    align-items: center;
+    background-color: #242f3d;
+}
+
+.users__menu_link{
+    display: block;
+    text-decoration: none;
+    width:100%;
+    height:100%;
+    color:#fff;
+    cursor: pointer;
+}
+
+.users__menu_close{
+    display: block;
+    position: absolute;
+    top:10px;
+    right:10px;
+    width:20px;
+    height:20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color:transparent;
+    border:none;
+}
+
+.users__menu_close::before{
+    content: '';
+    position: absolute;
+    width:4px;
+    height: 20px;
+    background-color: #fff;
+    border-radius: 3px;
+    transform: rotate(-45deg);
+}
+
+.users__menu_close::after{
+    content: '';
+    position: absolute;
+    width:4px;
+    height: 20px;
+    background-color: #fff;
+    border-radius: 3px;
+    transform: rotate(45deg);
+}
+
+
+
 .users__list{
+    overflow: hidden;
+    overflow-y: scroll;
     width:100%;
     height: 100%;
-    padding: 15px;
+}
+
+.users__list::-webkit-scrollbar{
+    width: 0px;
+    background: transparent;
 }
 
 
@@ -120,13 +271,26 @@ ul>li{
     display: flex;
 }
 
+.users__item:not(:last-child){
+    margin-bottom: 12px;
+}
+
 .users__img{
-    width:40px;
-    height:100%;
+    width:50px;
+    height:50px;
     overflow: hidden;
     background-color:#fff;
-    margin-right:10px;
     border-radius: 50%;
+}
+
+.users__pic{
+    width:100%;
+    height:100%;
+    object-fit: contain;
+}
+
+.users__info{
+    padding:10px;
 }
 
 .users__name{
@@ -213,4 +377,65 @@ ul>li{
 }
 .messages__message:nth-child(even){
     background-color: #17212b;
+}
+
+
+/* EDITOR */
+
+.img_editor{
+    position: relative;
+    width: 364px;
+    height: 452px;
+    border-radius: 4px;
+    background-color: #17212b;
+    padding:30px 40px;
+}
+
+.img_editor__input_wrap{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+    height:300px;
+    margin-bottom:15px;
+    z-index: 100;
+}
+
+.img_editor__pic{
+    position: absolute;
+    width: 100%;
+    height:100%;
+    object-fit: fill;
+}
+
+.img_editor__input{
+    display: none;
+}
+
+.img_editor__text{
+    text-align: center;
+    color:#7f91a4;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.img_editor__btns{
+    position: absolute;
+    right:20px;
+}
+
+.img_editor__btn{
+    width:110px;
+    height:40px;
+    padding:10px;
+    background-color:transparent;
+    color:#6ab2f2;
+    border-radius: 4px;
+    border:none;
+    cursor: pointer;
+}
+
+.img_editor__btn:hover{
+    background-color: #1d2a39;
 }

@@ -1,0 +1,37 @@
+<div class="chatroom">
+    <div class="chatroom__container">
+        <div class="users">
+            <div class="users__bar">
+                <a class="hamburger-menu-link" href="#">
+                <div class="hamburger-menu-link__bars"></div
+              ></a>
+              <input class='users__search' type="text" placeholder="Найти...">
+            </div>
+            <nav class="users__menu">
+                <ul class="users__menu_list">
+                    <li class="users__menu__item">
+                        <a href="#" class="users__menu_link users__menu_avatar">Изменить аватарку</a>
+                    </li>
+                </ul>
+                <button class='users__menu_close'></button>
+            </nav>
+            <ul class="users__list">
+                {{> './users-content'}}
+            </ul>
+        </div>
+        <div class="messages">
+            <div class="messages__head">
+                <div class="messages__text">Чат</div>
+                <div class="messages__users">{{counter}} онлайн</div>
+            </div>
+            <div class="messages__content">
+                {{> './messages-content'}}
+            </div>
+            <div class="messages__footer">
+                <input type="text" class="messages__send" placeholder='Введите сообщение...' required>
+                <button class="messages__btn">Отправить</button>
+            </div>
+        </div>
+    </div>
+</div>
+

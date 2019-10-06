@@ -16,10 +16,10 @@ rules.push({
 
 module.exports = {
     entry: {
-        index: './index.js',
+        index: './public/main.js',
     },
     devServer: {
-        index: './views/index.hbs',
+        index: './index.html',
         overlay: true
     },
     output: {
@@ -47,7 +47,7 @@ module.exports = {
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
             title: 'Chat',
-            template: 'index.hbs'
+            template: './views/index.hbs'
         }),
         new CleanWebpackPlugin(['dist'])
     ]

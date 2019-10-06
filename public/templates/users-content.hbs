@@ -1,0 +1,16 @@
+{{#each usersValue}}
+<li class="users__item">
+    <div class="users__img">
+        {{#if photoUrl}}
+            <img src="{{photoUrl}}" alt="" class="users__pic">
+        {{else}}
+            <img src="../public/images/unknown.png" alt="" class="users__pic">
+        {{/if}}
+    </div>
+    <div class="users__info">
+        <div class="users__name"> {{name}}
+        </div>
+        <div class="users__last_msg">{{lastMsg}}</div>
+    </div>
+</li>
+{{/each}}

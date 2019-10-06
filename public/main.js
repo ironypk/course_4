@@ -1,95 +1,96 @@
-
-// let test = document.getElementById('test').innerHTML;
-// let templateTest = Handlebars.compile(test);
-// let counter2 = {
-//    test: 1
-// };
-
-
-let template2 = Handlebars.compile(`<div class="chatroom">
-<div class="chatroom__container">
-    <div class="users">
-        <ul class="users__list">
-        </ul>
-    </div>
-    <div class="messages">
-        <div class="messages__head">
-            <div class="messages__text">Чат</div>
-            <div class="messages__users">{{counter}}</div>
-        </div>
-        <div class="messages__content"></div>
-        <div class="messages__footer">
-            <input type="text" class="messages__send" placeholder='Введите сообщение...'>
-            <button class="messages__btn">Отправить</button>
-        </div>
-    </div>
-</div>
-</div>`)
-
-let template3 = Handlebars.compile(`{{#each currentUsers}}
-<li class="user__item">
-    <div class="user__img">
-        <img src="" alt="" class="user__pic">
-    </div>
-    <div class="user__info">
-        <div class="user__name"> {{name}}
-        </div>
-        <div class="user__last_msg">{{msg}}</div>
-    </div>
-</li>
-{{/each}}`)
-
-
+import chat from './templates/chat-content.hbs';
+import editor from './templates/image-content.hbs';
 
 let socket = io.connect('http://localhost:3000');
 
-let chat = document.getElementById('chat').innerHTML;
-let template = Handlebars.compile(chat);
 
 let wrapper = document.querySelector('.wrapper')
 let form = document.querySelector('.form');
+let usersMenu;
+let photoUrl = null;
 
-let formBtn = document.querySelector('.form__button');
+//DATA
+let usersData = {};
+//Messages
+let messages = [];
+
 
 document.addEventListener('click', (e)=>{
-   e.preventDefault();
+   // e.preventDefault();
    //Авторизация
    if(e.target.classList.contains('form__button')){
       let name = form.elements.name.value
       let nickname = form.elements.nickname.value
-      socket.emit('change_username', {username : name, userNickname : nickname})
-      wrapper.innerHTML = template2();
+      if(name && nickname){
+         socket.emit('change_username', {username : name, userNickname : nickname})
+         wrapper.innerHTML = chat();
+      }
    }
    //Отправить сообщение на сервер
    if(e.target.classList.contains('messages__btn')){
-      let inputMsg = document.querySelector('.messages__send');
-      socket.emit('new_message', {message : inputMsg.value})
+      let inputMsg = document.querySelector('.messages__send').value;
+      if(inputMsg){
+         socket.emit('new_message', {message : inputMsg})
+      }
+   }
+   //Открыть бургер
+   if(e.target.classList.contains('hamburger-menu-link') || e.target.classList.contains('hamburger-menu-link__bars') ){
+       usersMenu = document.querySelector('.users__menu');
+       usersMenu.style =  'display : block';
+   }
+   ///Закрыть бургер
+   if(e.target.classList.contains('users__menu_close')){
+    usersMenu.style =  'display : none';
+   }
+
+   //Открыть editor
+   if(e.target.classList.contains('users__menu_avatar')){
+      wrapper.innerHTML = editor();
+   }
+   //Выбрать фото
+   if(e.target.classList.contains('img_editor__input')){
+      let editor  = document.querySelector('.img_editor__input');
+      editor.addEventListener('change', (e) =>{
+      let file = e.target.files[0];
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        photoUrl = reader.result;
+        document.querySelector('.img_editor__pic').src = photoUrl;
+      };
+})
+   }
+   //Сохранить фото
+   if(e.target.classList.contains('img_editor__accept')){
+      if(photoUrl){
+         socket.emit('new_avatar', photoUrl)
+      }
+
    }
 })
 
+
 socket.on('user_connected', (data)=>{
-   let usersList = document.querySelector('.users__list')
-   usersList.innerHTML = template3(data)
-   let userNum = document.querySelector('.messages__users')
-      userNum.textContent = data.counter + ' ' + 'онлайн';
-   // wrapper.innerHTML = template2(data);
+      usersData.counter = data.usersValue.length
+      usersData.usersValue = data.usersValue
+    wrapper.innerHTML = chat(usersData)
 })
 
 //Принимает полученные сообщения
 socket.on('new_message', (data) => {
-   let msgContent = document.querySelector('.messages__content')
-   let msg = createMsg(`${data.username} : ${data.message}`);
-   msgContent.appendChild(msg);
+   usersData.usersValue = data.usersValue;
+   messages.push(data.message);
+   usersData.messages = messages;
+   wrapper.innerHTML = chat(usersData);
 })
 
-//Создать сообщение в DOM
-function createMsg(value){
-   let msg = document.createElement('div')
-   msg.classList.add('messages__message')
-   msg.textContent = value
-   return msg
-}
+socket.on('new_avatar', (data) =>{
+   usersData.usersValue = data;
+   wrapper.innerHTML = chat(usersData);
+})
 
 
-//Создать пользователя в DOM
-function createUser(){}
+socket.on('disconnect', (data) =>{
+   usersData.usersValue = data;
+   wrapper.innerHTML = chat(usersData);
+})

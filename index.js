@@ -18,31 +18,44 @@ server = app.listen(3000)
 
 
 let io = require('socket.io')(server);
-let counter = 0;
+
+let users = new Map();
+let message = {};
 
 io.on('connection', (socket) => {
+    let usersValue = [];
 
-    console.log('New user connected')
+    users.set(socket.id);
 	//default username
     socket.username = "Anonymous"
     socket.nickname = "Anonymous"
 
     //listen on change_username
     socket.on('change_username', (data) => {
-        counter++;
         socket.username = data.username
         socket.nickname = data.userNickname
-        io.sockets.emit('user_connected', {msg : 'last msg', name : data.username, counter : counter, username : data.username, nickname : data.userNickname});
+        users.set(socket.id, {name : data.username, nickname : data.userNickname});
+        usersValue = Array.from(users.values());
+        io.sockets.emit('user_connected', {usersValue});
     })
 
     //listen on new_message
     socket.on('new_message', (data) => {
-        //broadcast the new message
-        io.sockets.emit('new_message', {message : data.message, username : socket.username});
+        users.get(socket.id).lastMsg = data.message;
+        usersValue = Array.from(users.values());
+        message = {name : socket.username, message : data.message};
+        io.sockets.emit('new_message', {usersValue , message});
     })
 
-    //listen on typing
-    // socket.on('typing', (data) => {
-    // 	socket.broadcast.emit('typing', {username : socket.username})
-    // })
+    socket.on('new_avatar', (photoUrl) =>{
+        users.get(socket.id).photoUrl = photoUrl;
+        usersValue = Array.from(users.values());
+        io.sockets.emit('new_avatar', usersValue);
+    })
+
+    socket.on('disconnect', () => {
+        users.delete(socket.id);
+        usersValue = Array.from(users.values());
+        io.sockets.emit('disconnect', usersValue);
+    })
 })
